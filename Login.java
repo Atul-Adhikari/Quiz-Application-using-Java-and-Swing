@@ -1,6 +1,5 @@
 package FinalAssessment;
 
-
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,6 +19,12 @@ import java.sql.SQLException;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 
+
+/**
+ * The Login class provides a GUI-based login interface for the Quiz App.
+ * Users enter their username, age, and select their level to log in.
+ * The system validates the credentials against a MySQL database.
+ */
 public class Login extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -28,6 +33,11 @@ public class Login extends JFrame {
     private JTextField textField_1;
     private JComboBox<String> comboBox;
 
+    
+    /**
+     * The main method to launch the Login window.
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -41,6 +51,10 @@ public class Login extends JFrame {
         });
     }
 
+    
+    /**
+     * Constructs the Login frame, initializes UI components, and sets up event handling.
+     */
     public Login() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 450, 300);
@@ -70,7 +84,12 @@ public class Login extends JFrame {
 
         JButton btnNewButton = new JButton("Login");
         btnNewButton.addMouseListener(new MouseAdapter() {
+            /**
+             *Handles the login process by validating user credentials against the database.
+             * If successful, it launches the QuizGame window; otherwise, it displays an error message.
+             */
             @Override
+            
             public void mouseClicked(MouseEvent e) {
 
                 String url = "jdbc:mysql://localhost/CompetitionDB";
