@@ -1,0 +1,41 @@
+package FinalAssessment;
+
+import java.util.List;
+
+
+/**
+ * The CompetitorList class manages a list of competitors and provides functionality to generate a report displaying their full details.
+ */
+public class CompetitorList {
+    private List<Competitor> competitors;
+
+    
+    /**
+     * Constructs a CompetitorList with a given list of competitors.
+     * @param competitors
+     */
+    public CompetitorList(List<Competitor> competitors) {
+        this.competitors = competitors;
+    }
+
+    // Generate report with competitors' full details
+    
+    /**
+     * Generates and prints a report displaying the full details of each competitor.
+     * If the list is empty, a message indicating no available competitors is printed.
+     */
+    public void generateReport() {
+        System.out.println("Competitor Report");
+        System.out.println("-------------------");
+
+        if (competitors.isEmpty()) {
+            System.out.println("No competitors available.");
+            return;
+        }
+
+        for (Competitor competitor : competitors) {
+            System.out.println(competitor.getFullDetails());
+        }
+    }
+
+}
