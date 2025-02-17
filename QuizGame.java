@@ -2,12 +2,16 @@ package FinalAssessment;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
+
+
+/**
+ * The QuizGame class represents a quiz game where a competitor answers multiple-choice questions based on their selected level.
+ */
 public class QuizGame extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel questionPanel;
@@ -22,6 +26,13 @@ public class QuizGame extends JFrame {
     private String level;
     private int currentGameIndex;
 
+    
+    /**
+     *Constructs a new  QuizGame instance for the given competitor and level.
+
+     * @param competitorId	The unique ID of the competitor.
+     * @param level	The difficulty level of the quiz (Beginner, Intermediate, Advanced).
+     */
     public QuizGame(int competitorId, String level) {
         this.competitorId = competitorId;
         this.level = level;
@@ -69,8 +80,6 @@ public class QuizGame extends JFrame {
                 showNextQuestion();
             } else {
                 storeScore();
-                JOptionPane.showMessageDialog(this, "Game Over! Your score: " + score);
-                System.exit(0);
             }
         });
 
@@ -86,12 +95,20 @@ public class QuizGame extends JFrame {
         }
     }
 
+    
+    /**
+     * Starts the quiz by resetting the score and displaying the first question.
+     */
     private void startQuiz() {
         score = 0;
         currentQuestionIndex = 0;
         showNextQuestion();
     }
 
+    
+    /**
+     * Displays the next question in the quiz.
+     */
     private void showNextQuestion() {
         if (currentQuestionIndex < questions.size()) {
             Question question = questions.get(currentQuestionIndex);
@@ -104,6 +121,10 @@ public class QuizGame extends JFrame {
         }
     }
 
+    
+    /**
+     * Checks the selected answer against the correct answer and updates the score.
+     */
     private void checkAnswer() {
         Question question = questions.get(currentQuestionIndex);
         String selectedAnswer = null;
@@ -118,6 +139,10 @@ public class QuizGame extends JFrame {
         }
     }
 
+    
+    /**
+     * Stores the competitor's score in the database and displays a summary.
+     */
     private void storeScore() {
         String columnName = "Score" + currentGameIndex;
         String query = "UPDATE Competitors SET " + columnName + " = ? WHERE Competitor_ID = ?";
@@ -127,11 +152,28 @@ public class QuizGame extends JFrame {
             stmt.setInt(1, score);
             stmt.setInt(2, competitorId);
             stmt.executeUpdate();
+
+            // Show score in "X/5" format
+            JOptionPane.showMessageDialog(this, "You scored: " + score + "/5", "Quiz Results", JOptionPane.INFORMATION_MESSAGE);
+
+            // Display Report after showing the score
+            SwingUtilities.invokeLater(() -> {
+                new Report();
+                dispose(); // Close the quiz window
+            });
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+
+    
+    /**
+     * Retrieves the current game index for the competitor based on their past attempts.
+     * 
+     * @return The next available game index (1-5). If the competitor has played 5 times, returns 6.
+     */
     private int getCurrentGameIndex() {
         String query = "SELECT Score1, Score2, Score3, Score4, Score5 FROM Competitors WHERE Competitor_ID = ?";
         int gameIndex = 1;
@@ -141,24 +183,30 @@ public class QuizGame extends JFrame {
             stmt.setInt(1, competitorId);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {  // Check if a record exists
+            if (rs.next()) {  
                 for (int i = 1; i <= 5; i++) {
                     Object score = rs.getObject("Score" + i);
                     if (score == null || (score instanceof Integer && (Integer) score == 0)) {
-                        return i; // Found an empty slot
+                        return i;
                     }
                 }
-                return 6; // All 5 slots are filled
+                return 6;
             } else {
-                return 1; // No record found, must be the first game
+                return 1;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 6; // Default to 6 if an error occurs
+        return 6;
     }
 
-
+    
+    
+    /**
+     * Loads a random selection of five questions from the database for the specified level.
+     * @param level The quiz difficulty level (Beginner, Intermediate, Advanced).
+     * @return A list of up to 5 Question objects.
+     */
     private List<Question> loadQuestions(String level) {
         List<Question> questionList = new ArrayList<>();
         String query = "SELECT * FROM Questions WHERE Level = ?";
