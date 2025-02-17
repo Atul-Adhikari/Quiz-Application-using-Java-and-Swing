@@ -19,6 +19,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
+
+/**
+ * The signupclass represents a graphical user interface (GUI) for user registration.
+ * Users can enter their name, age, and select their experience level before signing up.
+ * If the user already exists in the database, an appropriate message is displayed.
+ * Upon successful signup, the user is redirected to the RoleSelection window.
+ * This class interacts with a MySQL database to store user information.
+ */
 public class signup extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -134,6 +143,13 @@ public class signup extends JFrame {
                                 insertPs.setString(3, level);
                                 insertPs.executeUpdate();
                                 JOptionPane.showMessageDialog(null, "Signup successful.");
+                                
+                              signup signup = new signup();
+                              signup.setVisible(false);
+
+                              RoleSelection roleSelection = new RoleSelection();
+                              roleSelection.setVisible(true);
+
                             }
                         }
                     }
@@ -155,9 +171,9 @@ public class signup extends JFrame {
         btnNewButton_1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Login loginFrame = new Login();
-                loginFrame.setVisible(true);
-                // Close the Signup window (optional)
+                RoleSelection roleSelection = new RoleSelection();
+                roleSelection.setVisible(true);
+//                 Close the Signup window (optional)
                 dispose();
             }
         });
